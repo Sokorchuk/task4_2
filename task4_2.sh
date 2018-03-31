@@ -20,9 +20,9 @@
 
 ntp_server='ua.pool.ntp.org'
 
-etc_dir='./etc/'
-bin_dir='./usr/local/bin/'
-backup_dir='./var/backup/ntp/'
+etc_dir='/etc/'
+bin_dir='/usr/local/bin/'
+backup_dir='/var/backup/ntp/'
 
 ntp_verify_sh=${bin_dir}ntp_verify.sh
 
@@ -60,12 +60,16 @@ test ! -f $ntp_verify_sh && {
 # This file created by task4_2.sh script
 #
 # start NTP server
-${etc_dir}init.d/ntp status ||
-{
+${etc_dir}init.d/ntp status &>/dev/null || {
+   echo 'NOTICE: ntp is not running'
    ${etc_dir}init.d/ntp start || exit 1
 }
 # check MD5 checksum and restore /etc/ntp.conf
-md5sum ${backup_dir}ntp.conf.md5 || cp -f ${backup_dir}ntp.conf-backup ${etc_dir}ntp.conf
+md5sum ${backup_dir}ntp.conf.md5 || {
+   echo 'NOTICE: /etc/ntp.conf was changed. Calculated diff:'
+   diff -a -u ${etc_dir}ntp.conf ${backup_dir}ntp.conf-backup
+   cp -f ${backup_dir}ntp.conf-backup ${etc_dir}ntp.conf
+}
 # restart NTP server
 ${etc_dir}init.d/ntp restart
 #" > $ntp_verify_sh
@@ -75,8 +79,8 @@ ${etc_dir}init.d/ntp restart
 # create /etc/crron.d/ntp file
 echo '# This file creted by task4_2.sh
 #
-# run '${ntp_verify_sh}' at every 5th minute
-*/5 * * * * root '$ntp_verify_sh > ${etc_dir}cron.d/ntp
+# run '${ntp_verify_sh}' at every 1 minute
+* * * * * root '$ntp_verify_sh > ${etc_dir}cron.d/ntp
 
 # reload cron files
 ${etc_dir}init.d/cron reload
