@@ -14,7 +14,7 @@
 # Files: /etc/ntp.conf
 #        /etc/cron.d/ntp
 #        /var/backup/ntp/ntp.conf-(UnixTime)
-#        /var/backup/ntp/ntp.conf-backup
+#        /var/backup/ntp/ntp.conf.bak
 #        /usr/local/bin/ntp_verify.sh
 #
 
@@ -28,8 +28,8 @@ ntp_verify_sh=${bin_dir}ntp_verify.sh
 
 # install NTP package
 apt-get install ntp 2>/dev/null || {
-	echo 'ERROR: NTP package not installed' >&2
-	exit 1
+   echo 'ERROR: NTP package not installed' >&2
+   exit 1
 }
 
 # make backup directory
@@ -40,11 +40,11 @@ awk '
    BEGIN { issrvaddr = 1; }
    ($1 == "server") && (issrvaddr == 1) { print "server '${ntp_server}'"; issrvaddr = 0; }
    ($1 != "server") { print $0; }
-' < ${etc_dir}ntp.conf > ${backup_dir}ntp.conf-backup
+' < ${etc_dir}ntp.conf > ${backup_dir}ntp.conf.bak
 # backup /etc/ntp.conf
 mv ${etc_dir}ntp.conf ${backup_dir}ntp.conf-$(date +%s)
 # change /etc/ntp.conf
-cp -f ${backup_dir}ntp.conf-backup ${etc_dir}ntp.conf
+cp -f ${backup_dir}ntp.conf.bak ${etc_dir}ntp.conf
 # MD5sum for /etc/ntp.conf
 md5sum ${etc_dir}ntp.conf > ${backup_dir}ntp.conf.md5
 
@@ -65,13 +65,13 @@ ${etc_dir}init.d/ntp status &>/dev/null || {
    ${etc_dir}init.d/ntp start || exit 1
 }
 # check MD5 checksum and restore /etc/ntp.conf
-md5sum ${backup_dir}ntp.conf.md5 || {
+md5sum ${backup_dir}ntp.conf.md5 &>/dev/null || {
    echo 'NOTICE: /etc/ntp.conf was changed. Calculated diff:'
-   diff -a -u ${etc_dir}ntp.conf ${backup_dir}ntp.conf-backup
-   cp -f ${backup_dir}ntp.conf-backup ${etc_dir}ntp.conf
+   diff -a -u ${backup_dir}ntp.conf.bak ${etc_dir}ntp.conf
+   cp -f ${backup_dir}ntp.conf.bak ${etc_dir}ntp.conf
+   # restart NTP server
+   ${etc_dir}init.d/ntp restart
 }
-# restart NTP server
-${etc_dir}init.d/ntp restart
 #" > $ntp_verify_sh
    chmod 755 $ntp_verify_sh
 }
@@ -84,4 +84,3 @@ echo '# This file creted by task4_2.sh
 
 # reload cron files
 ${etc_dir}init.d/cron reload
-
