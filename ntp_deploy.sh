@@ -27,7 +27,7 @@ backup_dir='/var/backup/ntp/'
 ntp_verify_sh=${bin_dir}ntp_verify.sh
 
 # install NTP package
-apt-get install ntp 2>/dev/null || {
+apt-get -y install ntp 2>/dev/null || {
    echo 'ERROR: NTP package not installed' >&2
    exit 1
 }
