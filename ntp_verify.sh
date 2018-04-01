@@ -1,5 +1,5 @@
 #! /bin/bash
-# This file created by task4_2.sh script
+# This file created by ntp_deploy.sh script
 #
 # start NTP server
 /etc/init.d/ntp status &>/dev/null || {

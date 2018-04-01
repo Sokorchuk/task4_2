@@ -1,6 +1,6 @@
 #! /bin/bash
 #
-# task4_2.sh -- ntp service install script
+# ntp_deploy.sh -- ntp service install script
 #
 # Copyright (C) 2018 Ihor P. Sokorchuk
 # Developed for Mirantis Inc. by Ihor Sokorchuk
@@ -9,7 +9,7 @@
 # This software is distributed under the terms of the GNU General Public
 # License ("GPL") version 2, as published by the Free Software Foundation.
 #
-# Usage: task4_2.sh
+# Usage: ntp_deploy.sh
 #
 # Files: /etc/ntp.conf
 #        /etc/cron.d/ntp
@@ -57,7 +57,7 @@ test ! -e $bin_dir && mkdir -p $bin_dir
 # create /usr/local/bin/ntp_veryfy.sh file
 test ! -f $ntp_verify_sh && {
    echo "#! /bin/bash
-# This file created by task4_2.sh script
+# This file created by ntp_deploy.sh script
 #
 # start NTP server
 ${etc_dir}init.d/ntp status &>/dev/null || {
@@ -77,7 +77,7 @@ md5sum -c ${backup_dir}ntp.conf.md5 &>/dev/null || {
 }
 
 # create /etc/crron.d/ntp file
-echo '# This file creted by task4_2.sh
+echo '# This file creted by ntp_deploy.sh
 #
 # run '${ntp_verify_sh}' at every 1 minute
 * * * * * root '$ntp_verify_sh > ${etc_dir}cron.d/ntp
