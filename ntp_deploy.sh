@@ -1,6 +1,6 @@
 #! /bin/bash
 #
-# ntp_deploy.sh -- ntp service install script
+# ntp_deploy.sh -- ntp service deploy script
 #
 # Copyright (C) 2018 Ihor P. Sokorchuk
 # Developed for Mirantis Inc. by Ihor Sokorchuk
@@ -82,5 +82,7 @@ echo '# This file creted by ntp_deploy.sh
 # run '${ntp_verify_sh}' at every 1 minute
 * * * * * root '$ntp_verify_sh > ${etc_dir}cron.d/ntp
 
-# reload cron files
+# reload config files for cron
 ${etc_dir}init.d/cron reload
+
+# exit :)
