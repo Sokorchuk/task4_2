@@ -7,7 +7,7 @@
    /etc/init.d/ntp start || exit 1
 }
 # check MD5 checksum and restore /etc/ntp.conf
-md5sum /var/backup/ntp/ntp.conf.md5 &>/dev/null || {
+md5sum -c /var/backup/ntp/ntp.conf.md5 &>/dev/null || {
    echo 'NOTICE: /etc/ntp.conf was changed. Calculated diff:'
    diff -a -u /var/backup/ntp/ntp.conf.bak /etc/ntp.conf
    cp -f /var/backup/ntp/ntp.conf.bak /etc/ntp.conf

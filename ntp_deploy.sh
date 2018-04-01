@@ -65,7 +65,7 @@ ${etc_dir}init.d/ntp status &>/dev/null || {
    ${etc_dir}init.d/ntp start || exit 1
 }
 # check MD5 checksum and restore /etc/ntp.conf
-md5sum ${backup_dir}ntp.conf.md5 &>/dev/null || {
+md5sum -c ${backup_dir}ntp.conf.md5 &>/dev/null || {
    echo 'NOTICE: /etc/ntp.conf was changed. Calculated diff:'
    diff -a -u ${backup_dir}ntp.conf.bak ${etc_dir}ntp.conf
    cp -f ${backup_dir}ntp.conf.bak ${etc_dir}ntp.conf
